@@ -1,6 +1,6 @@
-# Batch Processor
+# Bulk Processor
 
-A simple and efficient batch processor with size and timeout control, powered by `lodash`'s throttle function. This package helps you process items in batches, improving performance and reducing the load on resources when dealing with large datasets or asynchronous operations.
+A simple and efficient bulk processor with size and timeout control, powered by `lodash`'s throttle function. This package helps you process items in batches, improving performance and reducing the load on resources when dealing with large datasets or asynchronous operations.
 
 ## Features
 
@@ -20,10 +20,10 @@ npm install bulk-processor
 
 ## Usage
 
-Here's a simple example of how to use the batch processor:
+Here's a simple example of how to use the bulk processor:
 
 ```javascript
-const batchProcessor = require('bulk-processor');
+const { BulkProcessor } = require('bulk-processor');
 
 // Example batch processing function
 async function processBatch(batch) {
@@ -32,8 +32,8 @@ async function processBatch(batch) {
   await new Promise((resolve) => setTimeout(resolve, 100));
 }
 
-// Create a batch processor with a batch size of 5 and a 500ms timeout
-const processor = batchProcessor(5, 500, processBatch);
+// Create a bulk processor with a batch size of 5 and a 500ms timeout
+const processor = BulkProcessor(5, 500, processBatch);
 
 // Push some items into the batch
 for (let i = 0; i < 20; i++) {
@@ -43,15 +43,14 @@ for (let i = 0; i < 20; i++) {
 // Flush remaining items and log the total processed count after 1 second
 setTimeout(async () => {
   await processor.flush();
-  console.log('Total processed:', processor.getCounter());
 }, 1000);
 ```
 
 ## API
 
-### `batchProcessor(size, timeout, batchFunc)`
+### `BulkProcessor(size, timeout, batchFunc)`
 
-Creates a new batch processor instance.
+Creates a new bulk processor instance.
 
 - **`size`**: `number` - The maximum size of a batch.
 - **`timeout`**: `number` - The minimum time interval in milliseconds between batch executions.
@@ -69,12 +68,6 @@ Forces the current batch to be processed immediately. If you don't call `flush()
 
 - **Returns**: `Promise`
 
-### `getCounter()`
-
-Returns the total number of items that have been processed so far.
-
-- **Returns**: `number`
-
 ## Examples
 
 ### Basic Usage
@@ -82,14 +75,14 @@ Returns the total number of items that have been processed so far.
 This example shows the basic usage of the processor with the default configuration.
 
 ```javascript
-const batchProcessor = require('bulk-processor');
+const { BulkProcessor } = require('bulk-processor');
 
 async function processBatch(batch) {
   console.log('Processing batch:', batch);
   await new Promise((resolve) => setTimeout(resolve, 100));
 }
 
-const processor = batchProcessor(3, 200, processBatch);
+const processor = BulkProcessor(3, 200, processBatch);
 
 for (let i = 0; i < 10; i++) {
   processor.push(i);
@@ -101,14 +94,14 @@ for (let i = 0; i < 10; i++) {
 This example demonstrates how to customize the batch size and timeout.
 
 ```javascript
-const batchProcessor = require('bulk-processor');
+const { BulkProcessor } = require('bulk-processor');
 
 async function processBatch(batch) {
   console.log('Processing batch:', batch);
   await new Promise((resolve) => setTimeout(resolve, 50));
 }
 
-const processor = batchProcessor(10, 1000, processBatch); // Batch size 10, timeout 1 second
+const processor = BulkProcessor(10, 1000, processBatch); // Batch size 10, timeout 1 second
 
 for (let i = 0; i < 30; i++) {
   processor.push(i);
@@ -117,7 +110,6 @@ for (let i = 0; i < 30; i++) {
 // If you want to flush immediately even when there is data in batch
 setTimeout(async () => {
   await processor.flush();
-  console.log('Total processed: ' + processor.getCounter());
 }, 1000);
 ```
 
@@ -134,3 +126,4 @@ This project is licensed under the MIT License.
 ### v1.0.0
 
 - Initial Release
+

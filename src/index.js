@@ -5,11 +5,10 @@ const _ = require('lodash');
  * @param {number} size - The maximum size of a batch.
  * @param {number} timeout - The timeout in milliseconds.
  * @param {function} batchFunc - The function to be called with the batch.
- * @returns {object} - An object with push, flush, and getCounter functions.
+ * @returns {object} - An object with push, flush functions.
  */
-module.exports = function (size, timeout, batchFunc) {
+const BulkProcessor = function (size, timeout, batchFunc) {
   let batch = [];
-  let counter = 0;
 
   // Create an executor function
   const execBatchFunc = async () => {
@@ -19,8 +18,6 @@ module.exports = function (size, timeout, batchFunc) {
 
     // Process the batch
     await batchFunc(tmp);
-    counter += tmp.length;
-    console.log(`Processed ${tmp.length} records`);
   };
 
   // Create a throttled executor function
@@ -52,13 +49,8 @@ module.exports = function (size, timeout, batchFunc) {
     async flush() {
       return throttledFunc.flush();
     },
-
-    /**
-     * Gets the total number of items processed so far.
-     * @returns {number} - The total number of items processed.
-     */
-    getCounter() {
-      return counter;
-    },
   };
+};
+module.exports = {
+  BulkProcessor
 };
