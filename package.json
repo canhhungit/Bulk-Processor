@@ -1,0 +1,40 @@
+{
+  "name": "bulk-processor",
+  "version": "1.0.0",
+  "description": "A simple batch executor with size and timeout control.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  },
+  "keywords": [
+    "batch",
+    "executor",
+    "throttle",
+    "lodash",
+    "async",
+    "batch-processor",
+    "async-batch-executor",
+    "batch-throttle",
+    "batch-runner",
+    "batch-scheduler",
+    "lazy-batch",
+    "batch-promises",
+    "bulk-processor",
+    "group-executor",
+    "task-batcher",
+    "batchify"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/canhhungit/Bulk-Processor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/canhhungit/Bulk-Processor/issues"
+  },
+  "homepage": "https://github.com/canhhungit/Bulk-Processor#readme",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
