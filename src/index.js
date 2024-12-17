@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const throttle = require('lodash/throttle');
 
 /**
  * Class representing a batch executor
@@ -21,7 +21,7 @@ const BulkProcessor = function (size, timeout, batchFunc) {
   };
 
   // Create a throttled executor function
-  const throttledFunc = _.throttle(execBatchFunc, timeout, {
+  const throttledFunc = throttle(execBatchFunc, timeout, {
     leading: false,
     trailing: true,
   });
