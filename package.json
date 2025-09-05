@@ -1,6 +1,6 @@
 {
   "name": "bulk-processor",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "A simple batch executor with size and timeout control.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
