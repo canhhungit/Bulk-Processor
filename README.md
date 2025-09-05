@@ -42,8 +42,7 @@ await processor.flush();
 
 ```ts
 import { BulkProcessor } from 'bulk-processor';
-
-const processor = BulkProcessor<number>(5, 2000, async (batch) => {
+const processor = BulkProcessor(5, 2000, async (batch) => {
   console.log('Processing batch:', batch);
 });
 
