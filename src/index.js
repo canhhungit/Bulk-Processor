@@ -26,7 +26,7 @@ const BulkProcessor = function (size, timeout, batchFunc) {
     trailing: true,
   });
 
-  return {
+  const instance = {
     /**
      * Push item to batch
      * @param {any} item - An item to add to the batch.
@@ -49,8 +49,51 @@ const BulkProcessor = function (size, timeout, batchFunc) {
     async flush() {
       return throttledFunc.flush();
     },
+
+    /**
+     * Gracefully flush remaining items before shutdown
+     * @returns {Promise<void>}
+     */
+    async gracefulShutdown() {
+      try {
+        if (batch.length > 0) {
+          const tmp = batch;
+          batch = [];
+          await batchFunc(tmp);
+          console.log(
+            '[BulkProcessor] Flushed remaining batch before shutdown.'
+          );
+        } else {
+          await throttledFunc.flush();
+        }
+      } catch (err) {
+        console.error('[BulkProcessor] Error flushing before shutdown:', err);
+      }
+    },
   };
+
+  // Auto flush on system signals
+  const setupGracefulShutdown = () => {
+    const handleExit = async (signal) => {
+      console.log(
+        `[BulkProcessor] Received ${signal}, flushing remaining items...`
+      );
+      await instance.gracefulShutdown();
+      process.exit(0);
+    };
+
+    process.once('SIGINT', () => handleExit('SIGINT')); // Ctrl+C
+    process.once('SIGTERM', () => handleExit('SIGTERM')); // Docker stop, PM2 stop
+    process.once('beforeExit', async () => {
+      await instance.gracefulShutdown();
+    });
+  };
+
+  setupGracefulShutdown();
+
+  return instance;
 };
+
 module.exports = {
-  BulkProcessor
+  BulkProcessor,
 };
