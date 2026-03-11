@@ -1,6 +1,6 @@
 {
   "name": "@canhhungit/bulk-processor",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A simple batch executor with size and timeout control.",
   "main": "src/index.js",
   "types": "src/index.d.ts",

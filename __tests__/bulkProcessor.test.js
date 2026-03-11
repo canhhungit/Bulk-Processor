@@ -63,4 +63,15 @@ describe('BulkProcessor', () => {
 
     expect(batchFunc).toHaveBeenCalledWith([0, 1, 2, 3, 4]);
   });
+
+  test('should cancel pending execution when destroyed', async () => {
+    const processor = BulkProcessor(10, 1000, batchFunc);
+
+    processor.push('cancel-me');
+    processor.destroy();
+
+    jest.advanceTimersByTime(1000);
+
+    expect(batchFunc).not.toHaveBeenCalled();
+  });
 });

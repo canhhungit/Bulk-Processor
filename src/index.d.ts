@@ -7,8 +7,10 @@ export interface BulkProcessorOptions {
 export declare function BulkProcessor(
   size: number,
   timeout: number,
-  batchFunc: (items: any[]) => Promise<void>
+  batchFunc: (items: any[]) => Promise<void>,
 ): {
   push(item: any): void;
   flush(): Promise<void>;
+  gracefulShutdown(): Promise<void>;
+  destroy(): void;
 };

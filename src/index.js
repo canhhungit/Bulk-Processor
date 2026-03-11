@@ -26,6 +26,9 @@ const BulkProcessor = function (size, timeout, batchFunc) {
     trailing: true,
   });
 
+  // Track handlers for cleanup
+  const handlers = {};
+
   const instance = {
     /**
      * Push item to batch
@@ -61,7 +64,7 @@ const BulkProcessor = function (size, timeout, batchFunc) {
           batch = [];
           await batchFunc(tmp);
           console.log(
-            '[BulkProcessor] Flushed remaining batch before shutdown.'
+            '[BulkProcessor] Flushed remaining batch before shutdown.',
           );
         } else {
           await throttledFunc.flush();
@@ -70,23 +73,42 @@ const BulkProcessor = function (size, timeout, batchFunc) {
         console.error('[BulkProcessor] Error flushing before shutdown:', err);
       }
     },
+
+    /**
+     * Cleanup event listeners and stop the processor
+     */
+    destroy() {
+      throttledFunc.cancel();
+      if (handlers.SIGINT) process.removeListener('SIGINT', handlers.SIGINT);
+      if (handlers.SIGTERM) process.removeListener('SIGTERM', handlers.SIGTERM);
+      if (handlers.beforeExit)
+        process.removeListener('beforeExit', handlers.beforeExit);
+    },
   };
 
   // Auto flush on system signals
   const setupGracefulShutdown = () => {
-    const handleExit = async (signal) => {
+    handlers.SIGINT = async () => {
       console.log(
-        `[BulkProcessor] Received ${signal}, flushing remaining items...`
+        '[BulkProcessor] Received SIGINT, flushing remaining items...',
       );
       await instance.gracefulShutdown();
-      process.exit(0);
     };
 
-    process.once('SIGINT', () => handleExit('SIGINT')); // Ctrl+C
-    process.once('SIGTERM', () => handleExit('SIGTERM')); // Docker stop, PM2 stop
-    process.once('beforeExit', async () => {
+    handlers.SIGTERM = async () => {
+      console.log(
+        '[BulkProcessor] Received SIGTERM, flushing remaining items...',
+      );
       await instance.gracefulShutdown();
-    });
+    };
+
+    handlers.beforeExit = async () => {
+      await instance.gracefulShutdown();
+    };
+
+    process.once('SIGINT', handlers.SIGINT);
+    process.once('SIGTERM', handlers.SIGTERM);
+    process.on('beforeExit', handlers.beforeExit);
   };
 
   setupGracefulShutdown();
