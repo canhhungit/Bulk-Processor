@@ -1,5 +1,5 @@
 {
-  "name": "bulk-processor",
+  "name": "@canhhungit/bulk-processor",
   "version": "3.0.1",
   "description": "A simple batch executor with size and timeout control.",
   "main": "src/index.js",
@@ -29,7 +29,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/canhhungit/Bulk-Processor.git"
+    "url": "git+https://github.com/canhhungit/Bulk-Processor.git"
   },
   "bugs": {
     "url": "https://github.com/canhhungit/Bulk-Processor/issues"
