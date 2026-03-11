@@ -3,39 +3,35 @@ name: Publish to npm and GitHub Packages
 on:
   push:
     branches:
-      - main # Thay 'main' bằng tên branch chính của bạn
+      - main # Chạy khi push lên main. Lưu ý: version phải thay đổi mới publish được.
 
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.x' # Thay '16.x' bằng phiên bản Node.js bạn muốn dùng
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
 
-      # - name: Publish
-      #   run: |
-      #     npm publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Publish
-        uses: JS-DevTools/npm-publish@v3
+      - name: Publish to npm
+        uses: JS-DevTools/npm-publish@v3 # JS-DevTools giúp bỏ qua nếu trùng version
         with:
           token: ${{ secrets.NPM_TOKEN }}
+          access: public
 
   publish-github:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      packages: write # QUAN TRỌNG: Cần quyền ghi để đẩy package
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
